@@ -2,3 +2,18 @@
   font-family: sans-serif;
   text-align: center;
 }
+
+.List {
+  border: 1px solid #d9dddd;
+}
+
+.ListItemEven,
+.ListItemOdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MyRow:nth-child(even) {
+  background-color: #f8f8f0;
+}

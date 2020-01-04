@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import {
@@ -9,8 +9,7 @@ import {
   Row,
   ListGroup
 } from "react-bootstrap";
-import { RoList } from "./components/2020-01";
-
+import { RoList, ThingApp, VirtRoList } from "./components/2020-01";
 import "./styles.css";
 
 const firebaseConfig = {
@@ -28,6 +27,7 @@ const App = () => {
   let [provider, setProvider] = useState(false);
   let [user, setUser] = useState(false);
   let [games, setGames] = useState([]);
+  let [db, setDb] = useState(null);
 
   const initFirebase = () => {
     if (app) {
@@ -72,17 +72,11 @@ const App = () => {
   };
 
   const databaseDoThing = () => {
+    setDb(firebase.firestore());
     let gamename = firebase
       .firestore()
       .collection("games")
       .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-          // setGames([...games, doc.data()]);
-        });
-        return querySnapshot;
-      })
       .then(querySnapshot => {
         console.log(querySnapshot.docs.map(doc => doc.data().name).join());
         setGames(querySnapshot.docs.map(doc => doc.data()));
@@ -123,8 +117,11 @@ const App = () => {
           <Row>
             <h1>Thing App</h1>
           </Row>
+          <Row> </Row>
           <Row>
             <RoList items={games} />
+            <ThingApp db={db} />
+            <VirtRoList items={games.map(g => g.name)} />
           </Row>
         </Col>
       </Row>

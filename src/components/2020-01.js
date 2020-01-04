@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
+import Editor from "@monaco-editor/react";
+
 import {
   Badge,
   Button,
@@ -9,6 +11,8 @@ import {
   Row,
   ListGroup
 } from "react-bootstrap";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 export const RoList = ({ items }) => (
   <div>
@@ -22,21 +26,97 @@ export const RoList = ({ items }) => (
 );
 
 export const RoItem = ({ item }) => (
-  <ListGroup.Item>
+  <ListGroup.Item key={item.id}>
     {item.name || item.id || "Undefined"}{" "}
     {(item.tags || []).map(tag => (
-      <Badge variant="secondary" style={{ "margin-right": "2px" }}>
+      <Badge variant="secondary" style={{ marginRight: "2px" }}>
         {tag}
       </Badge>
     ))}
   </ListGroup.Item>
 );
 
-export const ThingApp = () => {
+export const FilterBox = ({ filterStr, setFilterStr }) => (
+  <input value={filterStr} />
+);
+
+// FIL-tered SEL-ectable List
+export const FilSelList = () => {};
+
+export const ThingApp = ({ db }) => {
   let [filterStr, setFilterStr] = useState("");
   let [selectedId, setSelectedId] = useState(null);
   let [isAdvancedToggle, setAdvancedToggle] = useState(true);
-  let [is]
+  let [isAsd, setAsd] = useState();
+
+  return (
+    <div>
+      {/* <FilterBox filterStr={filterStr} /> */}
+      <SampleThingCreator db={db} />
+    </div>
+  );
 };
 
-export const FilterBox = ({ filterStr }) => {};
+export const SampleThingCreator = ({ db }) => {
+  let [collName, setCollName] = useState("games");
+  let [item, setItem] = useState({ name: "Blinx 2" });
+
+  const onChangeInput = ev => {
+    setCollName(ev.target.value);
+  };
+
+  return (
+    <div>
+      <input value={collName} onChange={onChangeInput} />
+      <Button onClick={() => apiCreateItem(db, collName, item)}>Create</Button>
+    </div>
+  );
+};
+
+export const apiCreateItem = (db, collectionName, item) => {
+  console.log(`db:${db}, collectionName:${collectionName}, item:${item}`);
+  db.collection(collectionName)
+    .add(item)
+    .then(function(docRef) {
+      console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+      console.error("Error adding document: ", error);
+    });
+};
+
+const JsonEditor = ({ db }) => {
+  const [item, setItem] = useState({});
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  let valueGetter = useRef();
+
+  function handleEditorDidMount(_valueGetter) {
+    setIsEditorReady(true);
+    valueGetter.current = _valueGetter;
+  }
+
+  return (
+    <Editor
+      height={"40vh"}
+      language="json"
+      theme="dark"
+      editorDidMount={handleEditorDidMount}
+    />
+  );
+};
+
+const JsonEditorTextArea = ({ item, setItem }) => {};
+
+export const VirtRoList = ({ items }) => {
+  const Row2 = ({ index, style }) => (
+    <div className="MyRow" style={style}>
+      {items[index]}
+    </div>
+  );
+
+  return (
+    <List height={150} itemCount={items.length} itemSize={35} width={300}>
+      {Row2}
+    </List>
+  );
+};
