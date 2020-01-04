@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import Editor from "@monaco-editor/react";
-import ReactScrollableList from "react-scrollable-list";
 
 import {
   Badge,
@@ -100,25 +99,6 @@ const JsonEditor = ({ db }) => {
       language="json"
       theme="dark"
       editorDidMount={handleEditorDidMount}
-    />
-  );
-};
-
-export const VirtRoList = ({ items }) => {
-  const Row2 = ({ index, style }) => (
-    <div className="MyRow" style={style}>
-      {items[index]}
-    </div>
-  );
-
-  return (
-    <ReactScrollableList
-      listItems={items.map(it => (
-        <RoItem item={it} />
-      ))}
-      heightOfItem={30}
-      maxItemsToRender={50}
-      style={{ color: "#333" }}
     />
   );
 };
