@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import Editor from "@monaco-editor/react";
+import ReactScrollableList from "react-scrollable-list";
 
 import {
   Badge,
@@ -11,13 +12,11 @@ import {
   Row,
   ListGroup
 } from "react-bootstrap";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 export const RoList = ({ items }) => (
   <div>
     <Badge>{items.length}</Badge>
-    <ListGroup>
+    <ListGroup style={{ height: 50 }}>
       {items.map(it => (
         <RoItem item={it} />
       ))}
@@ -105,8 +104,6 @@ const JsonEditor = ({ db }) => {
   );
 };
 
-const JsonEditorTextArea = ({ item, setItem }) => {};
-
 export const VirtRoList = ({ items }) => {
   const Row2 = ({ index, style }) => (
     <div className="MyRow" style={style}>
@@ -115,8 +112,13 @@ export const VirtRoList = ({ items }) => {
   );
 
   return (
-    <List height={150} itemCount={items.length} itemSize={35} width={300}>
-      {Row2}
-    </List>
+    <ReactScrollableList
+      listItems={items.map(it => (
+        <RoItem item={it} />
+      ))}
+      heightOfItem={30}
+      maxItemsToRender={50}
+      style={{ color: "#333" }}
+    />
   );
 };

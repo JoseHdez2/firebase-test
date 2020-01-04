@@ -29,22 +29,9 @@ const App = () => {
   let [games, setGames] = useState([]);
   let [db, setDb] = useState(null);
 
-  const initFirebase = () => {
-    if (app) {
-      alert("App already initialized");
-      return;
-    }
-    alert("Initialized Firebase");
+  const initFirebaseAndProvider = () => {
     setApp(firebase.initializeApp(firebaseConfig));
-  };
-
-  const initProvider = () => {
-    if (provider) {
-      alert("App already initialized");
-      return;
-    }
     setProvider(new firebase.auth.GoogleAuthProvider());
-    alert("Initialized Provider");
   };
 
   const providerSignIn = () => {
@@ -90,16 +77,8 @@ const App = () => {
           <h1>Firebase</h1>
           <div>{app ? "App initialized!" : "App NOT initialized"}</div>
           <div>
-            <Button disabled={app} onClick={initFirebase}>
+            <Button disabled={app} onClick={initFirebaseAndProvider}>
               Initialize Firebase
-            </Button>
-          </div>
-          <div>
-            {provider ? "Provider initialized!" : "Provider NOT initialized"}
-          </div>
-          <div>
-            <Button disabled={provider} onClick={initProvider}>
-              Initialize Provider
             </Button>
           </div>
           <div>{user ? "User signed in!" : "User NOT signed in"}</div>
@@ -113,7 +92,7 @@ const App = () => {
             <Button onClick={databaseDoThing}>Database Do Thing</Button>
           </div>
         </Col>
-        <Col>
+        <Col style={{ height: "20vh" }}>
           <Row>
             <h1>Thing App</h1>
           </Row>
@@ -121,7 +100,6 @@ const App = () => {
           <Row>
             <RoList items={games} />
             <ThingApp db={db} />
-            <VirtRoList items={games.map(g => g.name)} />
           </Row>
         </Col>
       </Row>
