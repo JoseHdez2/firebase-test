@@ -29,15 +29,23 @@ const App = () => {
   let [games, setGames] = useState([]);
   let [db, setDb] = useState(null);
 
-  const initFirebaseAndProvider = () => {
-    setApp(firebase.initializeApp(firebaseConfig));
-    setProvider(new firebase.auth.GoogleAuthProvider());
-  };
+  useEffect(() => {
+    if (!app) {
+      setApp(firebase.initializeApp(firebaseConfig));
+    }
+    if (!provider) {
+      setProvider(new firebase.auth.GoogleAuthProvider());
+    }
+    if (!db) {
+      setDb(firebase.firestore()); // flimsy?
+    }
+  }, [app, provider, db]);
 
   const providerSignIn = () => {
     firebase
       .auth()
-      .signInWithPopup(provider)
+      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => firebase.auth().signInWithPopup(provider))
       .then(function(result) {
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = result.credential.accessToken;
@@ -58,51 +66,31 @@ const App = () => {
       });
   };
 
-  const databaseDoThing = () => {
-    setDb(firebase.firestore());
-    let gamename = firebase
-      .firestore()
-      .collection("games")
+  const docToItem = doc => ({ id: doc.id, ...doc.data() });
+
+  const loadGamesFromDatabase = async () => {
+    console.log("Loading games from database!");
+    db.collection("games")
       .get()
       .then(querySnapshot => {
-        console.log(querySnapshot.docs.map(doc => doc.data().name).join());
-        setGames(querySnapshot.docs.map(doc => doc.data()));
+        // console.log(querySnapshot.docs.map(doc => doc.data().name).join());
+        setGames(querySnapshot.docs.map(docToItem));
       });
   };
 
   return (
     <div className="App">
-      <Row>
-        <Col>
-          <h1>Firebase</h1>
-          <div>{app ? "App initialized!" : "App NOT initialized"}</div>
-          <div>
-            <Button disabled={app} onClick={initFirebaseAndProvider}>
-              Initialize Firebase
-            </Button>
-          </div>
-          <div>{user ? "User signed in!" : "User NOT signed in"}</div>
-          <div>
+      <Col>
+        <Row>
+          <ButtonGroup>
             <Button disabled={user} onClick={providerSignIn}>
-              Provider Sign in
+              Google Sign in
             </Button>
-          </div>
-          <div>Database</div>
-          <div>
-            <Button onClick={databaseDoThing}>Database Do Thing</Button>
-          </div>
-        </Col>
-        <Col style={{ height: "20vh" }}>
-          <Row>
-            <h1>Thing App</h1>
-          </Row>
-          <Row> </Row>
-          <Row>
-            <RoList items={games} />
-            <ThingApp db={db} />
-          </Row>
-        </Col>
-      </Row>
+            <Button onClick={loadGamesFromDatabase}>Load data</Button>
+          </ButtonGroup>
+        </Row>
+        <ThingApp games={games} db={db} />
+      </Col>
     </div>
   );
 };
