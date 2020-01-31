@@ -25,6 +25,7 @@ export const ThingApp = ({ games, db }) => {
   let [isAdvancedToggle, setAdvancedToggle] = useState(true);
   let [newItem, setNewItem] = useState({});
   let [userWantsToSave, setUserWantsToSave] = useState(false);
+  let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
   let [games2, setGames2] = useState([]);
 
   useEffect(() => {
@@ -32,13 +33,16 @@ export const ThingApp = ({ games, db }) => {
       if (userWantsToSave) {
         console.log("Saving...");
         apiUpdateItem(db, "games", newItem);
-        loadGamesFromDatabase(db);
         setUserWantsToSave(false);
+        setUserWantsToLoadAll(true);
         console.log("Saved!(?)");
+      }
+      if (userWantsToLoadAll && db != null) {
+        loadGamesFromDatabase(db);
       }
     }
     doIt();
-  }, [db, userWantsToSave, newItem]);
+  }, [db, userWantsToSave, userWantsToLoadAll, newItem]);
 
   const setSelectedIdAndItem = item => {
     setSelectedId(item.id);
