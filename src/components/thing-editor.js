@@ -42,7 +42,7 @@ export const ThingEditor2 = ({
         // console.log("now dirty!");
       }
     }
-  }, [isEditorReady, isDirty, isNewSampleThing]);
+  }, [isEditorReady, isDirty, isNewSampleThing, sampleThingStr, value]);
 
   useEffect(() => {
     setShortId((sampleThing.id || shortId).replace(/(.{3}).*(.{3})/, "$1..$2"));
@@ -80,7 +80,10 @@ export const ThingEditor2 = ({
           type="button"
           variant="primary"
           disabled={!isEditorReady}
-          onClick={() => {onCreate(db, JSON.parse(value)); setUserWantsToLoadAll(true)}}
+          onClick={() => {
+            onCreate(db, JSON.parse(value));
+            setUserWantsToLoadAll(true);
+          }}
         >
           create
         </Button>
@@ -88,7 +91,10 @@ export const ThingEditor2 = ({
           type="button"
           variant="success"
           disabled={!isDirty}
-          onClick={() => {onModify(db, JSON.parse(value)); setUserWantsToLoadAll(true)}}
+          onClick={() => {
+            onModify(db, JSON.parse(value));
+            setUserWantsToLoadAll(true);
+          }}
         >
           modify [{shortId}]
         </Button>
@@ -96,7 +102,10 @@ export const ThingEditor2 = ({
           type="button"
           variant="danger"
           disabled={!isEditorReady}
-          onClick={() => {onDelete(db, JSON.parse(value)); setUserWantsToLoadAll(true)}}
+          onClick={() => {
+            onDelete(db, JSON.parse(value));
+            setUserWantsToLoadAll(true);
+          }}
         >
           delete [{shortId}]
         </Button>
@@ -117,4 +126,3 @@ function getDifference(a, b) {
   }
   return result;
 }
-console.log(getDifference("lebronjames", "lebronnjames"));

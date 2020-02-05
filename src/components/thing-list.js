@@ -19,6 +19,7 @@ export const filterItem = (item, filterStr) => {
 export const RoList = ({ items, filterItems, selectedId, onClickItem }) => (
   <div>
     <FilteredAndTotalItemCount items={items} filterItems={filterItems} />
+    {items.length > 0 ? "" : <p>No items?</p>}
     <ListGroup>
       {items.filter(filterItems).map(it => (
         <RoItem

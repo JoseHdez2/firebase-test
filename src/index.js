@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
-import {
-  Badge,
-  Button,
-  ButtonGroup,
-  Col,
-  Row,
-  ListGroup
-} from "react-bootstrap";
-import { RoList, ThingApp, VirtRoList } from "./components/2020-01";
+import { Button, ButtonGroup, Col, Row } from "react-bootstrap";
+import { ThingApp } from "./components/2020-01";
 import "./styles.css";
 
 const firebaseConfig = {
@@ -26,6 +19,7 @@ const App = () => {
   let [app, setApp] = useState(false);
   let [provider, setProvider] = useState(false);
   let [user, setUser] = useState(false);
+  let [userSignedIn, setUserSignedIn] = useState(false);
   let [games, setGames] = useState([]);
   let [db, setDb] = useState(null);
 
@@ -37,9 +31,12 @@ const App = () => {
       setProvider(new firebase.auth.GoogleAuthProvider());
     }
     if (!db) {
-      setDb(firebase.firestore()); // flimsy?
+      setDb(firebase.firestore());
     }
-  }, [app, provider, db]);
+    if (!userSignedIn) {
+      setUserSignedIn(firebase.auth().currentUser);
+    }
+  }, [app, provider, db, userSignedIn]);
 
   const providerSignIn = () => {
     firebase
@@ -68,25 +65,14 @@ const App = () => {
 
   const docToItem = doc => ({ id: doc.id, ...doc.data() });
 
-  const loadGamesFromDatabase = async () => {
-    console.log("Loading games from database!");
-    db.collection("games")
-      .get()
-      .then(querySnapshot => {
-        // console.log(querySnapshot.docs.map(doc => doc.data().name).join());
-        setGames(querySnapshot.docs.map(docToItem));
-      });
-  };
-
   return (
     <div className="App">
       <Col>
         <Row>
           <ButtonGroup>
-            <Button disabled={user} onClick={providerSignIn}>
+            <Button disabled={!userSignedIn} onClick={providerSignIn}>
               Google Sign in
             </Button>
-            <Button onClick={loadGamesFromDatabase}>Load data</Button>
           </ButtonGroup>
         </Row>
         <ThingApp games={games} db={db} />
