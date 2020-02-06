@@ -1,12 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Badge,
-  Button,
-  ButtonGroup,
-  Col,
-  Row,
-  ListGroup
-} from "react-bootstrap";
+import React from "react";
+import { Badge, Dropdown, DropdownButton, ListGroup } from "react-bootstrap";
 
 export const filterItem = (item, filterStr) => {
   let filStr = filterStr.toLowerCase();
@@ -16,7 +9,15 @@ export const filterItem = (item, filterStr) => {
   );
 };
 
-export const RoList = ({ items, filterItems, selectedId, onClickItem }) => (
+export const RoList = ({
+  items,
+  thingTypes,
+  selectedThingType,
+  setSelectedThingType,
+  filterItems,
+  selectedId,
+  onClickItem
+}) => (
   <div>
     <FilteredAndTotalItemCount items={items} filterItems={filterItems} />
     {items.length > 0 ? "" : <p>No items?</p>}
@@ -31,6 +32,18 @@ export const RoList = ({ items, filterItems, selectedId, onClickItem }) => (
       ))}
     </ListGroup>
   </div>
+);
+
+export const ThingTypeFilterDropdown = ({
+  thingTypes,
+  selectedThingType,
+  setSelectedThingType
+}) => (
+  <DropdownButton title={selectedThingType}>
+    {thingTypes.map(t => (
+      <Dropdown.Item onClick={() => setSelectedThingType(t)}>{t}</Dropdown.Item>
+    ))}
+  </DropdownButton>
 );
 
 // TODO maybe filtering again isn't a good idea, should just pass the counts?
@@ -51,10 +64,13 @@ export const RoItem = ({
   displayName = item.name || item.id || "Undefined"
 }) => (
   <ListGroup.Item key={item.id} onClick={() => onClickItem(item)}>
+    <RoItemTypeTag type={item.type} />
     {isSelected ? <b>{displayName}</b> : displayName}{" "}
     <RoItemTags tags={item.tags} />
   </ListGroup.Item>
 );
+
+const RoItemTypeTag = ({ type }) => (type ? <Badge>{type}</Badge> : "");
 
 export const RoItemTags = ({ tags, showTags = true }) => (
   <span>

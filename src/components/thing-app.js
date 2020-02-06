@@ -1,16 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
-import firebase from "firebase";
-import Editor from "@monaco-editor/react";
-import {
-  Badge,
-  Button,
-  ButtonGroup,
-  Col,
-  Row,
-  ListGroup
-} from "react-bootstrap";
-import { ThingList, RoList, filterItem } from "./thing-list";
+import React, { useState, useEffect } from "react";
+import { Col, Row } from "react-bootstrap";
+import { RoList, ThingTypeFilterDropdown, filterItem } from "./thing-list";
 import { ThingEditor2 } from "./thing-editor";
 
 export const FilterBox = ({ filterStr, setFilterStr }) => (
@@ -22,11 +12,13 @@ export const FilterBox = ({ filterStr, setFilterStr }) => (
 
 export const ThingApp = ({ db }) => {
   let [filterStr, setFilterStr] = useState("");
+  let [selectedThingType, setSelectedThingType] = useState("thing");
   let [selectedId, setSelectedId] = useState(null);
   let [isAdvancedToggle, setAdvancedToggle] = useState(true);
   let [newItem, setNewItem] = useState({});
   let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
   let [things, setThings] = useState([]);
+  let [thingTypes, setThingTypes] = useState(["thing", "game"]);
 
   useEffect(() => {
     async function doIt() {
@@ -57,6 +49,13 @@ export const ThingApp = ({ db }) => {
   return (
     <Row>
       <Col>
+        <Row className="justify-content-sm-center">
+          <ThingTypeFilterDropdown
+            thingTypes={thingTypes}
+            selectedThingType={selectedThingType}
+            setSelectedThingType={setSelectedThingType}
+          />
+        </Row>
         <Row className="justify-content-sm-center">
           <FilterBox filterStr={filterStr} setFilterStr={setFilterStr} />
         </Row>

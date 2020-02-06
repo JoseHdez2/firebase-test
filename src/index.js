@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import { Button, ButtonGroup, Col, Row } from "react-bootstrap";
-import { ThingApp } from "./components/2020-01";
+import { ThingApp } from "./components/thing-app";
 import "./styles.css";
 
 const firebaseConfig = {
