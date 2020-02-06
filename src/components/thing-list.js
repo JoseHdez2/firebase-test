@@ -1,11 +1,13 @@
 import React from "react";
 import { Badge, Dropdown, DropdownButton, ListGroup } from "react-bootstrap";
 
-export const filterItem = (item, filterStr) => {
+export const filterItem = (item, filterStr, selectedThingType) => {
   let filStr = filterStr.toLowerCase();
+  let filType = selectedThingType;
   return (
-    (item.name || "").toLowerCase().includes(filStr) ||
-    (item.tags || []).some(tag => tag.toLowerCase().includes(filStr))
+    ((item.name || "").toLowerCase().includes(filStr) ||
+      (item.tags || []).some(tag => tag.toLowerCase().includes(filStr))) &&
+    (filType === "thing" || item.type === filType)
   );
 };
 

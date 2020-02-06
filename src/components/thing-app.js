@@ -18,7 +18,7 @@ export const ThingApp = ({ db }) => {
   let [newItem, setNewItem] = useState({});
   let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
   let [things, setThings] = useState([]);
-  let [thingTypes, setThingTypes] = useState(["thing", "game"]);
+  let [thingTypes, setThingTypes] = useState(["thing"]);
 
   useEffect(() => {
     async function doIt() {
@@ -36,6 +36,7 @@ export const ThingApp = ({ db }) => {
   };
 
   const docToItem = doc => ({ id: doc.id, ...doc.data() });
+  const docToName = doc => doc.data().name;
 
   const loadThingsFromDatabase = async db => {
     console.log("Loading things from database!");
@@ -44,6 +45,12 @@ export const ThingApp = ({ db }) => {
       .then(querySnapshot => {
         // console.log(querySnapshot.docs.map(doc => doc.data().name).join());
         setThings(querySnapshot.docs.map(docToItem));
+      });
+    db.collection("things")
+      .where("type", "==", "thing-type")
+      .get()
+      .then(querySnapshot => {
+        setThingTypes(querySnapshot.docs.map(docToName));
       });
   };
   return (
@@ -62,7 +69,7 @@ export const ThingApp = ({ db }) => {
         <Row>
           <RoList
             items={things}
-            filterItems={it => filterItem(it, filterStr)}
+            filterItems={it => filterItem(it, filterStr, selectedThingType)}
             selectedId={selectedId}
             onClickItem={setSelectedIdAndItem}
           />
