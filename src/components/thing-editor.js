@@ -2,6 +2,7 @@ import Editor from "@monaco-editor/react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import React, { useState, useEffect, useRef } from "react";
 import { apiCreateItem, apiUpdateItem, apiDeleteItem } from "./api";
+import { BooleanToggle } from "./picker/my-toggle";
 
 export const ThingEditor2 = ({
   sampleThing,
@@ -12,6 +13,7 @@ export const ThingEditor2 = ({
   onModify = apiUpdateItem,
   onDelete = apiDeleteItem
 }) => {
+  const [isMonacoEditor, setIsMonacoEditor] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [value, setValue] = useState("");
   const [sampleThingStr, setSampleThingStr] = useState("");
@@ -25,9 +27,12 @@ export const ThingEditor2 = ({
     if (!isEditorReady) {
       return;
     }
-    setValue(editorRef.current.getValue());
+    if (isMonacoEditor) {
+      setValue(editorRef.current.getValue());
+    }
 
     if (isNewSampleThing) {
+      alert("is new sample thing");
       // sampleThing (and value) was changed from above; reset dirty flag.
       setDirty(false);
       // console.log("now clean!");
@@ -42,7 +47,14 @@ export const ThingEditor2 = ({
         // console.log("now dirty!");
       }
     }
-  }, [isEditorReady, isDirty, isNewSampleThing, sampleThingStr, value]);
+  }, [
+    isMonacoEditor,
+    isEditorReady,
+    isDirty,
+    isNewSampleThing,
+    sampleThingStr,
+    value
+  ]);
 
   useEffect(() => {
     setShortId((sampleThing.id || shortId).replace(/(.{3}).*(.{3})/, "$1..$2"));
@@ -51,7 +63,7 @@ export const ThingEditor2 = ({
   // sampleThing was changed from above; reset dirty flag.
   useEffect(() => {
     setIsNewSampleThing(true);
-    setSampleThingStr(JSON.stringify(sampleThing, null, "\t").trim());
+    setSampleThingStr(JSON.stringify(sampleThing, null, "  ").trim());
   }, [sampleThing]);
 
   function handleEditorDidMount(_valueGetter, editor) {
@@ -64,17 +76,28 @@ export const ThingEditor2 = ({
   }
 
   const sampleThingToStr = sampleThing =>
-    JSON.stringify(sampleThing, null, "\t");
+    JSON.stringify(sampleThing, null, "  ");
 
   return (
     <div>
-      <Editor
-        height={"40vh"}
-        language="json"
-        theme="dark"
-        value={sampleThingStr}
-        editorDidMount={handleEditorDidMount}
-      />
+      <span>Monaco Editor:</span>
+      <BooleanToggle choice={isMonacoEditor} setChoice={setIsMonacoEditor} />
+      {isMonacoEditor ? (
+        <Editor
+          height={"40vh"}
+          language="json"
+          theme="dark"
+          value={sampleThingStr}
+          editorDidMount={handleEditorDidMount}
+        />
+      ) : (
+        <textarea
+          onInput={ev => setValue(ev.target.value)}
+          style={{ width: "100%", height: "40vh" }}
+        >
+          {value}
+        </textarea>
+      )}
       <ButtonGroup>
         <Button
           type="button"

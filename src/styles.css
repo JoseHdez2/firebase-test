@@ -17,3 +17,8 @@
 .MyRow:nth-child(even) {
   background-color: #f8f8f0;
 }
+
+textarea {
+  font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+}

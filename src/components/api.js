@@ -20,11 +20,12 @@ export const apiCreateItem = (db, item, collectionName = "things") => {
 export const apiUpdateItem = (db, item, collectionName = "things") => {
   console.dir(db);
   console.log(`db:${db.keys}, collectionName:${collectionName}, id:${item.id}`);
-  const { id, deletedOn, ...restOfItem } = item;
+  const { id, meta, ...restOfItem } = item;
+  let newMeta = { lastUpdatedOn: Date(), ...meta };
   // TODO the line above will remove deletedOn attribute from doc...
   db.collection(collectionName)
     .doc(id)
-    .set(restOfItem);
+    .set({ meta: newMeta, ...restOfItem });
 };
 
 export const apiDeleteItem = (db, item, collectionName = "things") => {
@@ -34,12 +35,8 @@ export const apiDeleteItem = (db, item, collectionName = "things") => {
     .delete();
 };
 
-export const apiDeleteItemGalaxyBrain = (
-  db,
-  item,
-  collectionName = "things"
-) => {
-  const { id, ...restOfItem } = item;
+export const apiLogicalDeleteItem = (db, item, collectionName = "things") => {
+  const { id, meta, ...restOfItem } = item;
   db.collection(collectionName)
     .doc(id)
     .set({
