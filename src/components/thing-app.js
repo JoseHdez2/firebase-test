@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { RoList, ThingTypeFilterDropdown, filterItem } from "./thing-list";
 import { ThingEditor2 } from "./thing-editor";
+import { MyToggle } from "./picker/my-toggle";
 
 export const FilterBox = ({ filterStr, setFilterStr }) => (
   <span>
@@ -9,6 +10,8 @@ export const FilterBox = ({ filterStr, setFilterStr }) => (
     <input value={filterStr} onChange={ev => setFilterStr(ev.target.value)} />
   </span>
 );
+
+const ThemeContext = React.createContext('light');
 
 export const ThingApp = ({ db }) => {
   let [filterStr, setFilterStr] = useState("");

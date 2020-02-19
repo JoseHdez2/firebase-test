@@ -133,6 +133,7 @@ export const ThingEditor2 = ({
           delete [{shortId}]
         </Button>
       </ButtonGroup>
+      {value}
     </div>
   );
 };
