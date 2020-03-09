@@ -18,7 +18,23 @@
   background-color: #f8f8f0;
 }
 
+#selected {
+  background-color: gray;
+}
+
 textarea {
   font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
     DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+/**
+ * Polka dot
+ */
+
+body {
+  background: wheat;
+  background-image: radial-gradient(white 20%, transparent 0),
+    radial-gradient(white 20%, transparent 0);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
 }

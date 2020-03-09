@@ -65,10 +65,14 @@ export const RoItem = ({
   showTags = true,
   displayName = item.name || item.id || "Undefined"
 }) => (
-  <ListGroup.Item key={item.id} onClick={() => onClickItem(item)}>
+  <ListGroup.Item
+    className={isSelected ? "selected" : ""}
+    key={item.id}
+    onClick={() => onClickItem(item)}
+  >
     <RoItemTypeTag type={item.type} />
     {isSelected ? <b>{displayName}</b> : displayName}{" "}
-    <RoItemTags tags={item.tags} />
+    <RoItemTags tags={showTags ? item.tags : []} />
   </ListGroup.Item>
 );
 

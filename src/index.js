@@ -68,6 +68,8 @@ const App = () => {
   return (
     <div className="App">
       <Col>
+        <Row>App last updated 2020-03-07</Row>
+        <Row>{new Date().toLocaleTimeString}</Row>
         <Row>
           <ButtonGroup>
             <Button disabled={!userSignedIn} onClick={providerSignIn}>

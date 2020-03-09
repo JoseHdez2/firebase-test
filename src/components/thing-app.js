@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { RoList, ThingTypeFilterDropdown, filterItem } from "./thing-list";
 import { ThingEditor2 } from "./thing-editor";
-import { MyToggle } from "./picker/my-toggle";
+import { MyToggleLinks } from "./picker/my-toggle-links";
 
 export const FilterBox = ({ filterStr, setFilterStr }) => (
   <span>
@@ -11,13 +11,12 @@ export const FilterBox = ({ filterStr, setFilterStr }) => (
   </span>
 );
 
-const ThemeContext = React.createContext('light');
+const ThemeContext = React.createContext("light");
 
 export const ThingApp = ({ db }) => {
   let [filterStr, setFilterStr] = useState("");
   let [selectedThingType, setSelectedThingType] = useState("thing");
   let [selectedId, setSelectedId] = useState(null);
-  let [isAdvancedToggle, setAdvancedToggle] = useState(true);
   let [newItem, setNewItem] = useState({});
   let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
   let [things, setThings] = useState([]);
@@ -60,10 +59,10 @@ export const ThingApp = ({ db }) => {
     <Row>
       <Col>
         <Row className="justify-content-sm-center">
-          <ThingTypeFilterDropdown
-            thingTypes={thingTypes}
-            selectedThingType={selectedThingType}
-            setSelectedThingType={setSelectedThingType}
+          <MyToggleLinks
+            choices={thingTypes}
+            choice={selectedThingType}
+            setChoice={setSelectedThingType}
           />
         </Row>
         <Row className="justify-content-sm-center">

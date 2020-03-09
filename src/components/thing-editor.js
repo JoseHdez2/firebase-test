@@ -29,6 +29,7 @@ export const ThingEditor2 = ({
     }
     if (isMonacoEditor) {
       setValue(editorRef.current.getValue());
+    } else {
     }
 
     if (isNewSampleThing) {
@@ -39,6 +40,8 @@ export const ThingEditor2 = ({
       setIsNewSampleThing(false); // consume "event"
     } else if (!isDirty && !isNewSampleThing) {
       // value was now changed by editor
+      console.log("now dirty");
+      setDirty(true);
       if (sampleThingStr !== value) {
         // console.log(getDifference(sampleThingStr, value));
         // console.log(`sampleThingStr: ${sampleThingStr}`);
@@ -60,11 +63,15 @@ export const ThingEditor2 = ({
     setShortId((sampleThing.id || shortId).replace(/(.{3}).*(.{3})/, "$1..$2"));
   }, [shortId, sampleThing.id]);
 
-  // sampleThing was changed from above; reset dirty flag.
   useEffect(() => {
-    setIsNewSampleThing(true);
-    setSampleThingStr(JSON.stringify(sampleThing, null, "  ").trim());
+    // console.log("[thing-editor] sampleThing --> sampleThingStr");
+    setSampleThingStr(sampleThingToStr(sampleThing).trim());
   }, [sampleThing]);
+
+  useEffect(() => {
+    // console.log("[thing-editor] sampleThingStr --> value");
+    setValue(sampleThingStr);
+  }, [sampleThingStr]);
 
   function handleEditorDidMount(_valueGetter, editor) {
     setIsEditorReady(true);
@@ -78,65 +85,89 @@ export const ThingEditor2 = ({
   const sampleThingToStr = sampleThing =>
     JSON.stringify(sampleThing, null, "  ");
 
+  const onClickCreate = () => {
+    onCreate(db, JSON.parse(value));
+    setUserWantsToLoadAll(true);
+  };
+
+  const onClickUpdate = () => {
+    onModify(db, JSON.parse(value));
+    setUserWantsToLoadAll(true);
+  };
+
+  const onClickDelete = () => {
+    onDelete(db, JSON.parse(value));
+    setUserWantsToLoadAll(true);
+  };
+
   return (
     <div>
-      <span>Monaco Editor:</span>
-      <BooleanToggle choice={isMonacoEditor} setChoice={setIsMonacoEditor} />
+      {/* <span>Monaco Editor:</span> */}
+      {/* <BooleanToggle choice={isMonacoEditor} setChoice={setIsMonacoEditor} /> */}
       {isMonacoEditor ? (
         <Editor
           height={"40vh"}
           language="json"
           theme="dark"
-          value={sampleThingStr}
+          value={sampleThingStr} // should be "value"
           editorDidMount={handleEditorDidMount}
         />
       ) : (
         <textarea
           onInput={ev => setValue(ev.target.value)}
           style={{ width: "100%", height: "40vh" }}
-        >
-          {value}
-        </textarea>
+          value={value}
+        />
       )}
-      <ButtonGroup>
-        <Button
-          type="button"
-          variant="primary"
-          disabled={!isEditorReady}
-          onClick={() => {
-            onCreate(db, JSON.parse(value));
-            setUserWantsToLoadAll(true);
-          }}
-        >
-          create
-        </Button>
-        <Button
-          type="button"
-          variant="success"
-          disabled={!isDirty}
-          onClick={() => {
-            onModify(db, JSON.parse(value));
-            setUserWantsToLoadAll(true);
-          }}
-        >
-          modify [{shortId}]
-        </Button>
-        <Button
-          type="button"
-          variant="danger"
-          disabled={!isEditorReady}
-          onClick={() => {
-            onDelete(db, JSON.parse(value));
-            setUserWantsToLoadAll(true);
-          }}
-        >
-          delete [{shortId}]
-        </Button>
-      </ButtonGroup>
+      <MyCoolButtons
+        shortId={shortId}
+        isMonacoEditor={isMonacoEditor}
+        isDirty={isDirty}
+        onClickCreate={onClickCreate}
+        onClickUpdate={onClickUpdate}
+        onClickDelete={onClickDelete}
+      />
       {value}
     </div>
   );
 };
+
+const MyCoolButtons = ({
+  shortId,
+  isMonacoEditor,
+  isEditorReady,
+  isDirty,
+  onClickCreate,
+  onClickUpdate,
+  onClickDelete
+}) => (
+  <ButtonGroup>
+    <Button
+      type="button"
+      variant="primary"
+      disabled={isMonacoEditor && !isEditorReady}
+      onClick={onClickCreate}
+    >
+      create
+    </Button>
+    <Button
+      type="button"
+      variant="success"
+      disabled={isMonacoEditor && (!isEditorReady || !isDirty)}
+      onClick={onClickUpdate}
+    >
+      modify [{shortId}]
+    </Button>
+    <Button
+      type="button"
+      variant="danger"
+      disabled={isMonacoEditor && !isEditorReady}
+      onClick={onClickDelete}
+    >
+      delete [{shortId}]
+    </Button>
+  </ButtonGroup>
+);
 
 function getDifference(a, b) {
   var i = 0;
@@ -144,7 +175,7 @@ function getDifference(a, b) {
   var result = "";
 
   while (j < b.length) {
-    if (a[i] != b[j] || i == a.length) result += b[j];
+    if (a[i] !== b[j] || i === a.length) result += b[j];
     else i++;
     j++;
   }
