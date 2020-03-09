@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { apiCreateItem, apiUpdateItem, apiDeleteItem } from "./api";
 import { BooleanToggle } from "./picker/my-toggle";
 
-export const ThingEditor2 = ({
+export const ThingEditor = ({
   sampleThing,
   selectedId,
   db,

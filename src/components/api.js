@@ -1,5 +1,5 @@
 //-----------------------
-// FIREBASE API METHODS
+// FIREBASE: CREATE
 //-----------------------
 
 export const apiCreateItem = (db, item, collectionName = "things") => {
@@ -17,6 +17,35 @@ export const apiCreateItem = (db, item, collectionName = "things") => {
     });
 };
 
+//-----------------------
+// FIREBASE: READ
+//-----------------------
+
+const docToItem = doc => ({ id: doc.id, ...doc.data() });
+const docToName = doc => doc.data().name;
+
+export const apiReadItems = async db => {
+  console.log("Loading things from database!");
+  db.collection("things")
+    .get()
+    .then(querySnapshot => {
+      return querySnapshot.docs.map(docToItem);
+    });
+};
+
+export const apiReadCategories = async db => {
+  db.collection("things")
+    .where("type", "==", "thing-type")
+    .get()
+    .then(querySnapshot => {
+      return querySnapshot.docs.map(docToName);
+    });
+};
+
+//-----------------------
+// FIREBASE: UPDATE
+//-----------------------
+
 export const apiUpdateItem = (db, item, collectionName = "things") => {
   console.dir(db);
   console.log(`db:${db.keys}, collectionName:${collectionName}, id:${item.id}`);
@@ -27,6 +56,10 @@ export const apiUpdateItem = (db, item, collectionName = "things") => {
     .doc(id)
     .set({ meta: newMeta, ...restOfItem });
 };
+
+//-----------------------
+// FIREBASE: DELETE
+//-----------------------
 
 export const apiDeleteItem = (db, item, collectionName = "things") => {
   const { id, ...restOfItem } = item;

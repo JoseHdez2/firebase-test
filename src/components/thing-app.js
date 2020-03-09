@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
-import { RoList, ThingTypeFilterDropdown, filterItem } from "./thing-list";
-import { ThingEditor2 } from "./thing-editor";
+import { RoList, filterItem } from "./thing-list";
+import { ThingEditor } from "./thing-editor";
 import { MyToggleLinks } from "./picker/my-toggle-links";
 
 export const FilterBox = ({ filterStr, setFilterStr }) => (
@@ -11,11 +11,12 @@ export const FilterBox = ({ filterStr, setFilterStr }) => (
   </span>
 );
 
+// TODO use React context
 const ThemeContext = React.createContext("light");
 
 export const ThingApp = ({ db }) => {
   let [filterStr, setFilterStr] = useState("");
-  let [selectedThingType, setSelectedThingType] = useState("thing");
+  let [selectedCategory, setSelectedCategory] = useState("thing");
   let [selectedId, setSelectedId] = useState(null);
   let [newItem, setNewItem] = useState({});
   let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
@@ -61,8 +62,8 @@ export const ThingApp = ({ db }) => {
         <Row className="justify-content-sm-center">
           <MyToggleLinks
             choices={thingTypes}
-            choice={selectedThingType}
-            setChoice={setSelectedThingType}
+            choice={selectedCategory}
+            setChoice={setSelectedCategory}
           />
         </Row>
         <Row className="justify-content-sm-center">
@@ -71,14 +72,14 @@ export const ThingApp = ({ db }) => {
         <Row>
           <RoList
             items={things}
-            filterItems={it => filterItem(it, filterStr, selectedThingType)}
+            filterItems={it => filterItem(it, filterStr, selectedCategory)}
             selectedId={selectedId}
             onClickItem={setSelectedIdAndItem}
           />
         </Row>
       </Col>
       <Col>
-        <ThingEditor2
+        <ThingEditor
           db={db}
           sampleThing={newItem}
           setItem={setNewItem}
@@ -88,22 +89,3 @@ export const ThingApp = ({ db }) => {
     </Row>
   );
 };
-
-// https://twitter.com/JoshWComeau/status/1221608059035963392
-function usePersistedState(name, defaultValue) {
-  const [value, setValue] = React.useState(() => {
-    if (typeof window === "undefined") {
-      return defaultValue;
-    }
-
-    const persistedValue = window.localStorage.getItem(name);
-
-    return persistedValue !== null ? JSON.parse(persistedValue) : defaultValue;
-  });
-
-  React.useEffect(() => {
-    window.localStorage.setItem(name, JSON.stringify(value));
-  }, [name, value]);
-
-  return [value, setValue];
-}
