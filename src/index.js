@@ -20,7 +20,6 @@ const App = () => {
   let [provider, setProvider] = useState(false);
   let [user, setUser] = useState(false);
   let [userSignedIn, setUserSignedIn] = useState(false);
-  let [games, setGames] = useState([]);
   let [db, setDb] = useState(null);
 
   useEffect(() => {
@@ -77,7 +76,7 @@ const App = () => {
             </Button>
           </ButtonGroup>
         </Row>
-        <ThingApp games={games} db={db} />
+        <ThingApp db={db} />
       </Col>
     </div>
   );
