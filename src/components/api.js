@@ -38,7 +38,7 @@ export const apiReadCategories = async db => {
     .where("type", "==", "thing-type")
     .get()
     .then(querySnapshot => {
-      return querySnapshot.docs.map(docToName);
+      return querySnapshot.docs.map(docToName).sort();
     });
 };
 

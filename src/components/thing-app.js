@@ -53,7 +53,7 @@ export const ThingApp = ({ db }) => {
       .where("type", "==", "thing-type")
       .get()
       .then(querySnapshot => {
-        setThingTypes(querySnapshot.docs.map(docToName));
+        setThingTypes(querySnapshot.docs.map(docToName).sort());
       });
   };
   return (
