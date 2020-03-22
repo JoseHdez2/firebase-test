@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { RoList, filterItem } from "./thing-list";
 import { ThingEditor } from "./thing-editor";
-import { MyToggleLinks } from "./picker/my-toggle-links";
+import { MyToggleLinksAdvanced } from "./picker/my-toggle-links";
 
 export const FilterBox = ({ filterStr, setFilterStr }) => (
   <span>
@@ -21,7 +21,7 @@ export const ThingApp = ({ db }) => {
   let [newItem, setNewItem] = useState({});
   let [userWantsToLoadAll, setUserWantsToLoadAll] = useState(true);
   let [things, setThings] = useState([]);
-  let [thingTypes, setThingTypes] = useState(["thing"]);
+  let [categories, setCategories] = useState(["thing"]);
 
   useEffect(() => {
     async function doIt() {
@@ -53,17 +53,22 @@ export const ThingApp = ({ db }) => {
       .where("type", "==", "thing-type")
       .get()
       .then(querySnapshot => {
-        setThingTypes(querySnapshot.docs.map(docToName).sort());
+        setCategories(querySnapshot.docs.map(docToName).sort());
       });
   };
   return (
     <Row>
       <Col>
         <Row className="justify-content-sm-center">
-          <MyToggleLinks
-            choices={thingTypes}
+          <MyToggleLinksAdvanced
+            choices={categories.map(c => ({ name: c, value: c }))}
             choice={selectedCategory}
             setChoice={setSelectedCategory}
+            printMethod={c =>
+              `${c.name} (${
+                things.filter(it => it.type === c.name).length
+              })`
+            }
           />
         </Row>
         <Row className="justify-content-sm-center">

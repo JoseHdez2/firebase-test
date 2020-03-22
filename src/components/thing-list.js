@@ -1,9 +1,9 @@
 import React from "react";
 import { Badge, Dropdown, DropdownButton, ListGroup } from "react-bootstrap";
 
-export const filterItem = (item, filterStr, selectedThingType) => {
+export const filterItem = (item, filterStr, selectedCategory) => {
   let filStr = filterStr.toLowerCase();
-  let filType = selectedThingType;
+  let filType = selectedCategory;
   return (
     ((item.name || "").toLowerCase().includes(filStr) ||
       (item.tags || []).some(tag => tag.toLowerCase().includes(filStr))) &&
@@ -11,15 +11,7 @@ export const filterItem = (item, filterStr, selectedThingType) => {
   );
 };
 
-export const RoList = ({
-  items,
-  thingTypes,
-  selectedThingType,
-  setSelectedThingType,
-  filterItems,
-  selectedId,
-  onClickItem
-}) => (
+export const RoList = ({ items, filterItems, selectedId, onClickItem }) => (
   <div>
     <FilteredAndTotalItemCount items={items} filterItems={filterItems} />
     {items.length > 0 ? "" : <p>No items?</p>}
@@ -36,14 +28,14 @@ export const RoList = ({
   </div>
 );
 
-export const ThingTypeFilterDropdown = ({
-  thingTypes,
-  selectedThingType,
-  setSelectedThingType
+export const CategoryFilterDropdown = ({
+  categories,
+  selectedCategory,
+  setSelectedCategory
 }) => (
-  <DropdownButton title={selectedThingType}>
-    {thingTypes.map(t => (
-      <Dropdown.Item onClick={() => setSelectedThingType(t)}>{t}</Dropdown.Item>
+  <DropdownButton title={selectedCategory}>
+    {categories.map(t => (
+      <Dropdown.Item onClick={() => setSelectedCategory(t)}>{t}</Dropdown.Item>
     ))}
   </DropdownButton>
 );
